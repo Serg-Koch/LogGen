@@ -1,4 +1,4 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.IO.Compression;
 
 namespace LogGen;
 
@@ -21,65 +21,62 @@ class Program
     "seepferdchen", "walross", "krokodil", "einhorn", "glueckskaeferchen", "phantom"
     ];
     public static string[] colors = ["rot", "gelb", "gruen", "blau", "violett", "weiss", "schwarz"];
-    public static string[] stand = ["gehend", "fliegend", "rennend", "schwimmend"];
-    public class Login
+    public static string[] state = ["gehend", "fliegend", "rennend", "schwimmend"];
+    public static string[] excludedSigns = ["'", ".", "\\", "^", "`", "/", ",","[", "]", "{", "}", ":",";"];
+    public static string[] signs = ["!","@","#","$","%","&","*","<",">","?"];
+
+    public class Generator
     {
         public string Animal { get; set; }  = String.Empty;
-        public string Article { get; set; } = String.Empty;
         public string Color { get; set; } = String.Empty;
         public string State { get; set; } = String.Empty;
-        public string Nickname {get;set;} = String.Empty;
-        public string Password {get;set;} = String.Empty;
-        public void CreateLogin()
+        public string Login()
         {
-            Nickname = State + "_" + Color + "_" + Animal;
+            return $"{State}_{Color}_{Animal}";        
         }
-        public void CreatePassword()
+        public string Password()
         {
+            string password = String.Empty;
             Random random = new();
-            for (int i = 0; i < 13; i++)
+            password += Convert.ToChar(random.Next('A','Z'+1)).ToString();
+            password += Convert.ToChar(random.Next('a','z'+1)).ToString();
+            password += random.Next(0,10).ToString();
+            password += signs[random.Next(signs.Length)];
+            for (int i = 0; i < 14; i++)
             {
-                Password += Convert.ToChar(random.Next(33,127));                
+                string sign = Convert.ToChar(random.Next(33,123)).ToString();
+                if(!excludedSigns.Contains(sign))
+                {
+                    password += sign;
+                }                
             }
+            return password;
         }
     }
-
     static void Main(string[] args)
     {
         Random random = new();
-        Login login = new();
-        switch (random.Next(1, 4))
+        Generator user = new();
+        user.State = state[random.Next(state.Length)];
+        user.Color = colors[random.Next(colors.Length)];
+        switch (random.Next(4))
         {
             case 1:
-                login.Article = "die";
+                user.Animal = female[random.Next(female.Length)];
+                user.State += "e";
+                user.Color += "e";
                 break;
             case 2:
-                login.Article = "der";
+                user.Animal = male[random.Next(male.Length)];
+                user.State += "er";
+                user.Color += "er";
                 break;
             default:
-                login.Article = "das";
+                user.Animal = neutral[random.Next(neutral.Length)];
+                user.State += "es";
+                user.Color += "es";
                 break;
         }
-        switch (login.Article)
-        {
-            case "die":
-                login.Animal = female[random.Next(female.Length)];
-                login.Stand = stand[random.Next(stand.Length)] + "e";
-                login.Color = colors[random.Next(colors.Length)] +"e";
-                break;
-            case "der":
-                login.Animal = male[random.Next(male.Length)];
-                login.Stand = stand[random.Next(stand.Length)] + "er";
-                login.Color = colors[random.Next(colors.Length)] + "er";
-                break;
-            default:
-                login.Animal = neutral[random.Next(neutral.Length)];
-                login.Stand = stand[random.Next(stand.Length)] + "es";
-                login.Color = colors[random.Next(colors.Length)] + "es";
-                break;
-        }
-        login.CreateLogin();
-        login.CreatePassword();
-        Console.WriteLine($"Login: {login.Nickname} | Password: {login.Password}");
+        Console.WriteLine($"Login: {user.Login()} | Password: {user.Password()}");
     }
 }
