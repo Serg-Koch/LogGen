@@ -1,6 +1,4 @@
-﻿using System.IO.Compression;
-
-namespace LogGen;
+﻿namespace LogGen;
 
 class Program
 {
@@ -22,7 +20,7 @@ class Program
     ];
     public static string[] colors = ["rot", "gelb", "gruen", "blau", "violett", "weiss", "schwarz"];
     public static string[] state = ["gehend", "fliegend", "rennend", "schwimmend"];
-    public static string[] excludedSigns = ["'", ".", "\\", "^", "`", "/", ",","[", "]", "{", "}", ":",";"];
+    public static string[] excludedSigns = ["'", ".", "\\", "^", "`", "/", ",","[", "]", ":",";","\""];
     public static string[] signs = ["!","@","#","$","%","&","*","<",">","?"];
 
     public class Generator
@@ -44,7 +42,7 @@ class Program
             password += signs[random.Next(signs.Length)];
             for (int i = 0; i < 14; i++)
             {
-                string sign = Convert.ToChar(random.Next(33,123)).ToString();
+                string sign = Convert.ToChar(random.Next(33,122)).ToString();
                 if(!excludedSigns.Contains(sign))
                 {
                     password += sign;
@@ -55,28 +53,34 @@ class Program
     }
     static void Main(string[] args)
     {
+        int numberOfSignIn;
         Random random = new();
         Generator user = new();
-        user.State = state[random.Next(state.Length)];
-        user.Color = colors[random.Next(colors.Length)];
-        switch (random.Next(4))
+        Console.Write("Gib eine Anzahl der Zugriffsdaten ein: ");
+        numberOfSignIn = Convert.ToInt32(Console.ReadLine());
+        for(int i = 0; i < numberOfSignIn; i++)
         {
-            case 1:
-                user.Animal = female[random.Next(female.Length)];
-                user.State += "e";
-                user.Color += "e";
-                break;
-            case 2:
-                user.Animal = male[random.Next(male.Length)];
-                user.State += "er";
-                user.Color += "er";
-                break;
-            default:
-                user.Animal = neutral[random.Next(neutral.Length)];
-                user.State += "es";
-                user.Color += "es";
-                break;
+            user.State = state[random.Next(state.Length)];
+            user.Color = colors[random.Next(colors.Length)];
+            switch (random.Next(4))
+            {
+                case 1:
+                    user.Animal = female[random.Next(female.Length)];
+                    user.State += "e";
+                    user.Color += "e";
+                    break;
+                case 2:
+                    user.Animal = male[random.Next(male.Length)];
+                    user.State += "er";
+                    user.Color += "er";
+                    break;
+                default:
+                    user.Animal = neutral[random.Next(neutral.Length)];
+                    user.State += "es";
+                    user.Color += "es";
+                    break;
+            }
+            Console.WriteLine($"Login: {user.Login()} | Password: {user.Password()}");
         }
-        Console.WriteLine($"Login: {user.Login()} | Password: {user.Password()}");
     }
 }
