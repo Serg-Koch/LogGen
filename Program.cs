@@ -35,17 +35,20 @@ class Program
         public string Password()
         {
             string password = String.Empty;
+            int counter = 1;
+            int difficult = 13;
             Random random = new();
             password += Convert.ToChar(random.Next('A','Z'+1)).ToString();
             password += Convert.ToChar(random.Next('a','z'+1)).ToString();
             password += random.Next(0,10).ToString();
             password += signs[random.Next(signs.Length)];
-            for (int i = 0; i < 14; i++)
+            while (counter < difficult)
             {
                 string sign = Convert.ToChar(random.Next(33,122)).ToString();
                 if(!excludedSigns.Contains(sign))
                 {
                     password += sign;
+                    counter += 1;
                 }                
             }
             return password;
